@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 
 try:
-	# Configure LEDs, buttons
+	# Configure Diodes and buttons
 	workingLed = 4
 	led = 13; led2 = 5; led3 = 6
 	btn = 17
@@ -37,13 +37,13 @@ try:
 		if not GPIO.input(btn) and clicked:
 			clicked = 0
 
-		# Leds off
+		# Diodes off
 		if btnCnt == 0:
 			GPIO.output(led, False)
 			GPIO.output(led2, False)
 			GPIO.output(led3, False)
 
-		# Leds style 1
+		# Diodes style 1
 		elif btnCnt == 1:
 			if timer == 0:
 				GPIO.output(led, True)
@@ -62,7 +62,7 @@ try:
 			if timeDelta >= 3000:
 				timer = 0
 
-		# Leds style 2
+		# Diodes style 2
 		elif btnCnt == 2:
 			if timer == 0:
 				GPIO.output(led, False)
@@ -83,7 +83,7 @@ try:
 			if timeDelta >= 3000:
 				timer = 0
 
-		# Leds style 3
+		# Diodes style 3
 		elif btnCnt == 3:
 			if timer == 0:
 				GPIO.output(led, True)
@@ -116,7 +116,7 @@ try:
 			if timeDelta >= 6000:
 				timer = 0
 
-		# Leds style 4
+		# Diodes style 4
 		elif btnCnt == 4:
 			if timer == 0:
 				GPIO.output(led, True)
@@ -131,7 +131,7 @@ try:
 			if timeDelta >= 2000:
 				timer = 0
 
-		# Leds style 5
+		# Diodes style 5
 		elif btnCnt == 5:
 			if timer == 0:
 				GPIO.output(led, True)
@@ -146,7 +146,7 @@ try:
 			if timeDelta >= 400:
 				timer = 0
 
-		# Leds style 6
+		# Diodes style 6
 		elif btnCnt == 6:
 			if timer == 0:
 				GPIO.output(led, True)
@@ -164,23 +164,43 @@ try:
 			if timeDelta >= 700:
 				timer = 0
 
-		# Leds always on
+		# Diodes style 7
 		elif btnCnt == 7:
+			if timer == 0:
+				GPIO.output(led, True)
+				GPIO.output(led2, False)
+				GPIO.output(led3, False)
+				timer = time.time()
+			timeDelta = (time.time() - timer) * 1000
+			if timeDelta >= 100 and timeDelta < 400:
+				GPIO.output(led2, True)
+			if timeDelta >= 200 and timeDelta < 400:
+				GPIO.output(led3, True)
+			if timeDelta >= 400:
+				GPIO.output(led, False)
+				GPIO.output(led2, False)
+				GPIO.output(led3, False)
+			if timeDelta >= 700:
+				timer = 0
+
+		# Diodes always on
+		elif btnCnt == 8:
 			GPIO.output(led, True)
 			GPIO.output(led2, True)
 			GPIO.output(led3, True)
 
-		# Go back to leds off
+		# Go back to diodes off
 		else:
 			print ("\rCurrent mode => 0 <=", end='\r')
 			btnCnt = 0
 
+# Detect Ctrl + C
 except KeyboardInterrupt:
 	print ("\r=> STOP <= request detected, cleaning out...", end='\r')
 	GPIOs = [2, 3, 4, 5, 17, 27, 22, 10, 9, 11, 5, 6, 13, 19, 26, 18, 23, 24, 25, 8, 7, 12, 16, 20, 21]
 	for x in GPIOs:
         	GPIO.setup(x, GPIO.OUT)
-          GPIO.output(x, GPIO.LOW)
+        	GPIO.output(x, GPIO.LOW)
 	time.sleep(1)
 	GPIO.cleanup()
 
